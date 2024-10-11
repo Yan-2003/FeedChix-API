@@ -12,7 +12,7 @@ water_channel.subscribe((msg)=>{
     console.log("Current Capacity: ", currentCapacity)
 })
 
-router.get('/', (req, res)=>{
+router.get('/capacity', (req, res)=>{
     res.json({capacity: currentCapacity})
 })
 

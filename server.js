@@ -5,11 +5,11 @@ const app = express()
 
 
 
-const food_weight = require('./router/FoodWeight')
-app.use('/api/foodWeight', food_weight)
+const food = require('./router/Food')
+app.use('/api/food', food)
 
-const water_capacity = require('./router/WaterCapacity')
-app.use('/api/waterCapacity', water_capacity)
+const water = require('./router/Water')
+app.use('/api/water', water)
 
 
 
