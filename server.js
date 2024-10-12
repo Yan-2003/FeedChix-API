@@ -11,6 +11,9 @@ app.use('/api/food', food)
 const water = require('./router/Water')
 app.use('/api/water', water)
 
+const tempHumid = require('./router/Temperature_Humidity')
+app.use('/api/tempHumid', tempHumid)
+
 
 
 app.listen( PORT ,()=>{
