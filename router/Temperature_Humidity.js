@@ -6,13 +6,12 @@ const router = express.Router()
 
 let tempHumid = 0
 
-tempHumid_channel.subscribe((msg)=>{
-    tempHumid = JSON.parse(Buffer.from(msg.data).toString())
-    console.log(tempHumid)
-})
-
-
 router.get('/', (req, res)=>{
+    
+    tempHumid_channel.subscribe((msg)=>{
+        tempHumid = JSON.parse(Buffer.from(msg.data).toString())
+        console.log(tempHumid)
+    })
 
     res.json(tempHumid)
 

@@ -1,8 +1,10 @@
 require('dotenv').config()
 const PORT = process.env.PORT
 const express = require('express')
+
 const app = express()
 
+app.use(express.json()); 
 
 
 const food = require('./router/Food')
@@ -13,6 +15,7 @@ app.use('/api/water', water)
 
 const tempHumid = require('./router/Temperature_Humidity')
 app.use('/api/tempHumid', tempHumid)
+
 
 
 
