@@ -16,7 +16,8 @@ app.use('/api/water', water)
 const tempHumid = require('./router/Temperature_Humidity')
 app.use('/api/tempHumid', tempHumid)
 
-
+const light = require('./router/Lights')
+app.use('/api/light', light)
 
 
 app.listen( PORT ,()=>{

@@ -20,7 +20,7 @@ let message = {
     chick_num : 10
 }
 
-cron.schedule('* * * * *', ()=>{
+/* cron.schedule('* * * * *', ()=>{
 
     console.log("Attempting to send messange [Ably MQTT]")
 
@@ -39,7 +39,7 @@ cron.schedule('* * * * *', ()=>{
         console.log(error)
     }
 })
-
+ */
 
 router.get('/weight', (req, res)=>{
 
