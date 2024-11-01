@@ -20,6 +20,15 @@ const light = require('./router/Lights')
 app.use('/api/light', light)
 
 
+app.get('/api', (req, res)=>{
+    res.json({
+        message : "Welcome to C-coop IOT Base Monitoring System for your chicken.",
+        version : "Dev-1",
+        updates : "n/a"
+    })
+})
+
+
 app.listen( PORT ,()=>{
     console.log("Server is Running at PORT: " + PORT)
 })
