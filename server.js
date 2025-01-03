@@ -19,6 +19,9 @@ app.use('/api/tempHumid', tempHumid)
 const light = require('./router/Lights')
 app.use('/api/light', light)
 
+const Chicken = require('./router/Chicken')
+app.use('/api/chicken', Chicken)
+
 
 app.get('/api', (req, res)=>{
     res.json({
