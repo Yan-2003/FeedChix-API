@@ -10,14 +10,14 @@ const chicken_info = database.ref('chicken_info')
 let chickenInfo
 
 
-/* setInterval( async ()=>{
+setInterval( async ()=>{
 
 
     chicken_info.on('value', snapshot => {
         chickenInfo= snapshot.val()
         
         const payload = {
-            functionName : "light_auto",
+            functionName : "auto_recommend_env",
             week_age : chickenInfo.week_age,
         }
         
@@ -32,9 +32,9 @@ let chickenInfo
         console.log("adjusting light intensety.")
     })
     
-}, 5000)
+}, 30000)
 
- */
+
 
 router.post('/set_chicken', (req, res)=>{
 
