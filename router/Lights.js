@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const ably = require('../controller/Ably')
 const light_channel = ably('esp32')
-const light_status_channel = ably('esp32/lightStatus')
+const channel = ably('esp32/status')
 const cron = require('node-cron')
 const database = require('../Database/Firebase')
 
@@ -11,10 +11,9 @@ const schedule = database.ref('light_schedule')
 
 router.get('/status', (req, res)=>{
 
-    light_status_channel.subscribe((msg)=>{
-        light_status = Buffer.from(msg.data).toString()
-
-        console.log("light Status: ", light_status)
+    channel.subscribe((msg)=>{
+        sensors_status = JSON.parse(Buffer.from(msg.data).toString())
+        light_status = sensors_status.light_status
     })
     
     return res.json({"light_status" : light_status})

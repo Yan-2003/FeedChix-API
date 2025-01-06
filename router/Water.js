@@ -2,16 +2,15 @@ const express = require('express')
 const router = express.Router()
 const ably = require('../controller/Ably')
 
-const water_channel = ably('esp32/waterCapacity')
+const channel = ably('esp32/status')
 
 let currentCapacity = 0;
 
 router.get('/capacity', (req, res)=>{
 
-    water_channel.subscribe((msg)=>{
-        currentCapacity = parseFloat(Buffer.from(msg.data).toString(), 10);
-        console.log(msg)
-        console.log("Current Capacity: ", currentCapacity)
+    channel.subscribe((msg)=>{
+        sensors_status = JSON.parse(Buffer.from(msg.data).toString())
+        currentCapacity = sensors_status.water_capacity
     })
 
     res.json({capacity: currentCapacity})

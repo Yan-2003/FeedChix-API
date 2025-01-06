@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const ably = require('../controller/Ably')
 const cron = require('node-cron')
-const food_channel = ably('esp32/foodWeight')
+const channel = ably('esp32/status')
 
 const sched_channel = ably('esp32')
 
@@ -43,10 +43,9 @@ let message = {
 
 router.get('/weight', (req, res)=>{
 
-    food_channel.subscribe((msg)=>{
-        currentWeight = parseFloat(Buffer.from(msg.data).toString(), 10);
-        console.log(msg)
-        console.log("Current Weight: ", currentWeight)
+    channel.subscribe((msg)=>{
+        sensors_status = JSON.parse(Buffer.from(msg.data).toString())
+        currentWeight = sensors_status.food_weight
     })
 
     res.json({weight: currentWeight});

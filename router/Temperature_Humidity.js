@@ -1,16 +1,20 @@
 const express = require('express')
 const ably = require('../controller/Ably')
-const tempHumid_channel = ably('esp32/tempHumid')
+const channel = ably('esp32/status')
 
 const router = express.Router()
 
-let tempHumid = 0
-
 router.get('/', (req, res)=>{
+
+    let tempHumid = {
+        temperature : null,
+        humidity : null,
+    }
     
-    tempHumid_channel.subscribe((msg)=>{
-        tempHumid = JSON.parse(Buffer.from(msg.data).toString())
-        console.log(tempHumid)
+    channel.subscribe((msg)=>{
+        sensors_status = JSON.parse(Buffer.from(msg.data).toString())
+        tempHumid.temperature = sensors_status.temperature
+        tempHumid.humidity = sensors_status.humidity
     })
 
     res.json(tempHumid)
