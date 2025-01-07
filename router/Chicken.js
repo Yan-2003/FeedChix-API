@@ -2,12 +2,18 @@ const express = require('express')
 const router = express.Router()
 const ably = require('../controller/Ably')
 const database = require('../Database/Firebase')
-const axios = require('axios')
+const cron = require('node-cron')
 const light_auto_channel = ably('esp32')
 
 const chicken_info = database.ref('chicken_info')
 
 let chickenInfo
+
+
+function getScheduleDay(date) {
+  const inputDate = new Date(date)
+  return `0 ${inputDate.getMinutes()} ${inputDate.getHours()} * * ${inputDate.getDay()}`
+}
 
 
 setInterval( async ()=>{
@@ -34,6 +40,26 @@ setInterval( async ()=>{
     
 }, 30000)
 
+
+chicken_info.on('value', snapshot =>{
+    chickenInfo = snapshot.val()
+
+    let getWeek = getScheduleDay(chickenInfo.time_stamp)
+    
+    
+    cron.schedule( getWeek, async () => {
+
+        let new_week_age = chickenInfo.week_age + 1
+
+        await chicken_info.update({
+            week_age : new_week_age.toString()
+        })
+
+        console.log("chicken week age increase")
+    
+    })
+
+})
 
 
 router.post('/set_chicken', (req, res)=>{
