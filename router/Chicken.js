@@ -66,6 +66,7 @@ router.post('/set_chicken', (req, res)=>{
 
     chicken_info.set({
         week_age : req.body.week_age,
+        chicken_num : req.body.chicken_num,
         time_stamp : new Date().toISOString() 
     }).then(()=>{
         console.log("Set Chicken Info")
