@@ -4,6 +4,7 @@ const ably = require('../controller/Ably')
 const database = require('../Database/Firebase')
 const cron = require('node-cron')
 const light_auto_channel = ably('esp32')
+const cron  = require('node-cron')
 
 const chicken_info = database.ref('chicken_info')
 
@@ -15,10 +16,7 @@ function getScheduleDay(date) {
   return `0 ${inputDate.getMinutes()} ${inputDate.getHours()} * * ${inputDate.getDay()}`
 }
 
-
-setInterval( async ()=>{
-
-
+cron.schedule("* * * * *" , ()=>{
     chicken_info.on('value', snapshot => {
         chickenInfo= snapshot.val()
         
@@ -37,8 +35,8 @@ setInterval( async ()=>{
     
         console.log("adjusting light intensety.")
     })
-    
-}, 30000)
+})
+
 
 
 chicken_info.on('value', snapshot =>{
