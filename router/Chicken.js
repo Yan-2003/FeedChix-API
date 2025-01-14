@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const ably = require('../controller/Ably')
 const database = require('../Database/Firebase')
-const cron = require('node-cron')
 const light_auto_channel = ably('esp32')
 const cron  = require('node-cron')
 
