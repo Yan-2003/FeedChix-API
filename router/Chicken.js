@@ -46,7 +46,7 @@ chicken_info.on('value', snapshot =>{
     
     cron.schedule( getWeek, async () => {
 
-        let new_week_age = chickenInfo.week_age + 1
+        let new_week_age = parseInt(chickenInfo.week_age) + 1
 
         await chicken_info.update({
             week_age : new_week_age.toString()
