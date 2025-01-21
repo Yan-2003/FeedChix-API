@@ -140,7 +140,7 @@ schedule.on('value', snapshot => {
     })
 
     console.log('Data updated in real-time:', LightSchedule);
-})
+}) 
 
 
 const getTime = (time) =>{
