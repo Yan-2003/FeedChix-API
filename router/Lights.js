@@ -5,7 +5,7 @@ const light_channel = ably('esp32')
 const channel = ably('esp32/status')
 const cron = require('node-cron')
 const database = require('../Database/Firebase')
-
+const sendPushNotification = require('../controller/Notification')
 let light_status = ""
 const schedule = database.ref('light_schedule')
 
@@ -99,6 +99,8 @@ schedule.on('value', snapshot => {
             status : "ON"
         }
 
+        sendPushNotification("Turning Lights On ")
+
         try {
             light_channel.publish('light', payload, (err) => {
                 if (err) {
@@ -123,6 +125,9 @@ schedule.on('value', snapshot => {
             functionName : "light",
             status : "OFF"
         }
+
+        sendPushNotification("Turning Lights Off ")
+
 
         try {
             light_channel.publish('light', payload, (err) => {
