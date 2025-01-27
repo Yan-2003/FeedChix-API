@@ -1,8 +1,8 @@
 const axios = require('axios');
 const database = require('../Database/Firebase')
-
-
 const notificaiton = database.ref('notification_log')
+const admin = require('firebase-admin');
+
 
 // Function to send a push notification
 const sendPushNotification = async (message_body) => {
@@ -12,17 +12,15 @@ const sendPushNotification = async (message_body) => {
       appToken: "UtZgk2d9XwWKObtyW9dA3d",
       title: "C coop",
       body: message_body,
-      dateSent: new Date(),
+      dateSent: Date.now(),
       pushData: { yourProperty: "yourPropertyValue" }
   }
 
     const response = await axios.post('https://app.nativenotify.com/api/notification', message);
 
-    const new_notification = push(notificaiton)
-
-    set(new_notification, {
-      body: message_body,
-      dateSent: new Date(),
+    notificaiton.push({
+      message: message_body,
+      timestamp: admin.database.ServerValue.TIMESTAMP, 
     })
 
     console.log('Notification sent:', response.data);

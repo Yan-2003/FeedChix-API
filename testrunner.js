@@ -1,3 +1,7 @@
 
+const sendPushNotification = require('./controller/Notification')
 
-console.log(parseInt('1') + parseInt('1'))
+
+sendPushNotification('My name is Julliane one of the developer of C coop.')
+
+
