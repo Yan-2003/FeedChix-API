@@ -17,6 +17,14 @@ const sendPushNotification = async (message_body) => {
   }
 
     const response = await axios.post('https://app.nativenotify.com/api/notification', message);
+
+    const new_notification = push(notificaiton)
+
+    set(new_notification, {
+      body: message_body,
+      dateSent: new Date(),
+    })
+
     console.log('Notification sent:', response.data);
   } catch (error) {
     console.error('Error sending notification:', error);
