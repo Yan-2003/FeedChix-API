@@ -12,12 +12,16 @@ notification_logs.on('value', snapshot => {
 })
 
 
-
 router.get('/', (req ,res)=>{
-    
-    console.log(notifications)
 
-    return res.json(notifications)
+
+    
+    const notificationArray = Object.keys(notifications).map(key =>({
+      id : key,
+      ...notifications[key]
+    }))
+
+    return res.json(notificationArray)
 
 })
 
