@@ -3,9 +3,11 @@ const database = require('../Database/Firebase')
 const notificaiton = database.ref('notification_log')
 const admin = require('firebase-admin');
 
-
 // Function to send a push notification
 const sendPushNotification = async (message_body) => {
+
+  const date = new Date()
+
   try {
     const message =  {
       appId: 26755,
@@ -20,7 +22,8 @@ const sendPushNotification = async (message_body) => {
 
     notificaiton.push({
       message: message_body,
-      timestamp: admin.database.ServerValue.TIMESTAMP, 
+      date: date.toString(), 
+      timestamp :  admin.database.ServerValue.TIMESTAMP,
     })
 
     console.log('Notification sent:', response.data);
