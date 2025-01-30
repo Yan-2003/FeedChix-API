@@ -15,10 +15,11 @@ notification_logs.on('value', snapshot => {
 
 router.get('/', (req ,res)=>{
     
-    return res.json(notifications)
-    
-})
+    console.log(notifications)
 
+    return res.json(notifications)
+
+})
 
 
 module.exports = router

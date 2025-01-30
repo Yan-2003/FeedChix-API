@@ -23,7 +23,7 @@ const Chicken = require('./router/Chicken')
 app.use('/api/chicken', Chicken)
 
 const Notificaiton = require('./router/Notifications')
-app.use('/notification_log', Notificaiton)
+app.use('/api/notification_log', Notificaiton)
 
 
 app.get('/api', (req, res)=>{
