@@ -7,20 +7,23 @@ const app = express()
 app.use(express.json()); 
 
 
-const food = require('./router/Food')
-app.use('/api/food', food)
+const Food = require('./router/Food')
+app.use('/api/food', Food)
 
-const water = require('./router/Water')
-app.use('/api/water', water)
+const Water = require('./router/Water')
+app.use('/api/water', Water)
 
-const tempHumid = require('./router/Temperature_Humidity')
-app.use('/api/tempHumid', tempHumid)
+const TempHumid = require('./router/Temperature_Humidity')
+app.use('/api/tempHumid', TempHumid)
 
-const light = require('./router/Lights')
-app.use('/api/light', light)
+const Light = require('./router/Lights')
+app.use('/api/light', Light)
 
 const Chicken = require('./router/Chicken')
 app.use('/api/chicken', Chicken)
+
+const Notificaiton = require('./router/Notifications')
+app.use('/notification_log', Notificaiton)
 
 
 app.get('/api', (req, res)=>{
