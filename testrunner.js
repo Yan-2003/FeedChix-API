@@ -2,7 +2,7 @@
 const sendPushNotification = require('./controller/Notification')
 
 
-sendPushNotification('Hello From C coop')
+sendPushNotification('Seding this notification of testing')
 
 
 return;
