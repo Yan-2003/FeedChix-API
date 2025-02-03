@@ -10,14 +10,15 @@ const database = require('../Database/Firebase')
 
 let currentWeight = 0;
 
-const chicken_info_db = database.ref('chicken_info')
+/* const chicken_info_db = database.ref('chicken_info')
 
 let chicken_info
 
 chicken_info_db.on('value', snapshot =>{
     chicken_info = snapshot.val()
+    
+    console.log("chicken info : " ,chicken_info)
 })
-
 
 
 let message = {
@@ -25,6 +26,8 @@ let message = {
     age_week : chicken_info.week_age,
     chick_num : chicken_info.chicken_num
 }
+
+ */
 
 /* cron.schedule('* * * * *', ()=>{
 
