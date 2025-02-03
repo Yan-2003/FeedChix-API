@@ -8,7 +8,18 @@ const sched_channel = ably('esp32')
 
 const database = require('../Database/Firebase')
 
+const feeding_schedule = database.ref('feeding_schedule');
+
 let currentWeight = 0;
+
+let feeding_schedule_list
+
+
+feeding_schedule.on('value', snapshot =>{
+    feeding_schedule_list = snapshot.val()
+})
+
+
 
 /* const chicken_info_db = database.ref('chicken_info')
 
@@ -63,13 +74,24 @@ router.get('/weight', (req, res)=>{
 
 router.post('/add_schedule', (req, res)=>{
 
-    const feeding_schedule = database.ref('feeding_schedule');
+    console.log(req.body)
 
     feeding_schedule.push({
-        timestamp : req.body.feeding_sched
+        timestamp : req.body.feeding_sched.toString()
     })
 
     res.json("successfully added feeding schedule");
+
+})
+
+router.get('/get_schedules', (req, res) => {
+    
+    const sched_list = Object.keys(feeding_schedule_list).map(key =>({
+        id : key,
+        ...feeding_schedule_list[key]
+    }))
+
+    return res.json(sched_list)
 
 })
 
