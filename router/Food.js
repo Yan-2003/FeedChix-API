@@ -6,18 +6,24 @@ const channel = ably('esp32/status')
 
 const sched_channel = ably('esp32')
 
-const firebase = require('../Database/Firebase')
+const database = require('../Database/Firebase')
 
 let currentWeight = 0;
-//const db = firebase.database();
 
+const chicken_info_db = database.ref('chicken_info')
+
+let chicken_info
+
+chicken_info_db.on('value', snapshot =>{
+    chicken_info = snapshot.val()
+})
 
 
 
 let message = {
     functionName : "feeding",
-    age_week : 1,
-    chick_num : 10
+    age_week : chicken_info.week_age,
+    chick_num : chicken_info.chicken_num
 }
 
 /* cron.schedule('* * * * *', ()=>{
@@ -52,26 +58,15 @@ router.get('/weight', (req, res)=>{
 
 })
 
-router.get('/sched_feeding', (req, res)=>{
+router.post('/add_schedule', (req, res)=>{
 
-/*     const ref = db.ref('feeding_schedule');
+    const feeding_schedule = database.ref('feeding_schedule');
 
-    ref.once('value', (snapshot) => {
-    const data = snapshot.val();
-    console.log(data);
-    });
+    feeding_schedule.push({
+        timestamp : req.body.feeding_sched
+    })
 
-    const newData = { 
-        age_week : age_week,
-        chicken_num : chicken_num, 
-        time: time, 
-        time_stamp: new Date().toISOString() 
-    };
-    ref.set(newData); */
-
-    
-
-    res.json("sched fedding");
+    res.json("successfully added feeding schedule");
 
 })
 
