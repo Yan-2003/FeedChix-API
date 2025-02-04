@@ -19,6 +19,19 @@ feeding_schedule.on('value', snapshot =>{
     feeding_schedule_list = snapshot.val()
 })
 
+const chicken_info = database.ref('chicken_info')
+
+let chicken
+
+chicken_info.on('value', snapshot=>{
+    chicken = snapshot.val()
+    console.log("chicken info: ", chicken)
+})
+
+
+
+
+
 
 
 /* const chicken_info_db = database.ref('chicken_info')
@@ -92,6 +105,17 @@ router.get('/get_schedules', (req, res) => {
     }))
 
     return res.json(sched_list)
+
+})
+
+
+router.delete('/delete_schedule/schedules/:id', (req ,res)=>{
+
+    const schedule_id = req.params.id
+
+
+    
+
 
 })
 
