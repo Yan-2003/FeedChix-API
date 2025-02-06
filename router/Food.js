@@ -109,14 +109,23 @@ router.get('/get_schedules', (req, res) => {
 })
 
 
-router.delete('/delete_schedule/schedules/:id', (req ,res)=>{
+router.delete('/delete_schedule/schedules/:id', async (req ,res)=>{
+
+    console.log('Deleteding an Item')
 
     const schedule_id = req.params.id
 
+    try {
+        await database.ref(`feeding_schedule/${schedule_id}`).remove()
+        console.log('successfully deleted an item')
 
-    
+    } catch (error) {
+        console.log(error)
+    }
 
+    console.log(schedule_id)
 
+    return res.json("Item Deleted")    
 })
 
 
