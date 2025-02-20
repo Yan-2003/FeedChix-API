@@ -3,6 +3,7 @@ const router = express.Router()
 const ably = require('../controller/Ably')
 const cron = require('node-cron')
 const channel = ably('esp32/status')
+const sendPushNotification = require('../controller/Notification')
 
 const sched_channel = ably('esp32')
 
@@ -14,11 +15,6 @@ let currentWeight = 0;
 
 let feeding_schedule_list
 
-
-feeding_schedule.on('value', snapshot =>{
-    feeding_schedule_list = snapshot.val()
-})
-
 const chicken_info = database.ref('chicken_info')
 
 let chicken
@@ -29,50 +25,67 @@ chicken_info.on('value', snapshot=>{
 })
 
 
+feeding_schedule.on('value', snapshot =>{
+    feeding_schedule_list = snapshot.val()
 
+    console.log('detecting new data...')
 
+    scheudleFood()
 
-
-
-/* const chicken_info_db = database.ref('chicken_info')
-
-let chicken_info
-
-chicken_info_db.on('value', snapshot =>{
-    chicken_info = snapshot.val()
-    
-    console.log("chicken info : " ,chicken_info)
 })
 
+const getTime = (time) =>{
+    const date = new Date(time)
 
-let message = {
-    functionName : "feeding",
-    age_week : chicken_info.week_age,
-    chick_num : chicken_info.chicken_num
+    const minues = date.getMinutes()
+    const hours = date.getHours()
+
+    return `${minues} ${hours} * * *`
 }
 
- */
 
-/* cron.schedule('* * * * *', ()=>{
+const scheudleFood = ()=> {
+    console.log("fedding...")
 
-    console.log("Attempting to send messange [Ably MQTT]")
+    const sched_list = Object.keys(feeding_schedule_list).map(key =>({
+        id : key,
+        ...feeding_schedule_list[key]
+    }))
 
-    try {
-        sched_channel.publish('feeding', message, (err) => {
-            if (err) {
-              console.error('Failed to publish message:', err);
-              return res.status(500).send('Error publishing message');
-            }
-        
-            console.log('Message published successfully:', message);
-            res.status(200).send('Feeding function triggered successfully');
-          });
-        
-    } catch (error) {
-        console.log(error)
+    let message = {
+        functionName : "feeding",
+        age_week : chicken_info.week_age,
+        chick_num : chicken_info.chicken_num
     }
-})
- */
+
+    sched_list.forEach(scheudle => {
+
+
+        cron.schedule( getTime(scheudle.timestamp), ()=>{
+
+            sendPushNotification("Feeding Chickens");
+
+            console.log("Attempting to send messange [Ably MQTT]")
+        
+            try {
+                sched_channel.publish('feeding', message, (err) => {
+                    if (err) {
+                      console.error('Failed to publish message:', err);
+                      return res.status(500).send('Error publishing message');
+                    }
+                
+                    console.log('Message published successfully:', message);
+                    res.status(200).send('Feeding function triggered successfully');
+                  });
+                
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+    });
+
+}
 
 router.get('/weight', (req, res)=>{
 
