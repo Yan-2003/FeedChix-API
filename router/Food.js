@@ -47,18 +47,20 @@ const getTime = (time) =>{
 const scheudleFood = ()=> {
     console.log("fedding...")
 
-    const sched_list = Object.keys(feeding_schedule_list).map(key =>({
-        id : key,
-        ...feeding_schedule_list[key]
-    }))
-
+    
     let message = {
         functionName : "feeding",
         age_week : chicken_info.week_age,
         chick_num : chicken_info.chicken_num
     }
+    
+    if(feeding_schedule_list != null){
 
-    if(sched_list.length > 0){
+        const sched_list = Object.keys(feeding_schedule_list).map(key =>({
+            id : key,
+            ...feeding_schedule_list[key]
+        }))
+
         sched_list.forEach(scheudle => {
     
     
