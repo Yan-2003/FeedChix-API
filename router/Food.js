@@ -58,32 +58,35 @@ const scheudleFood = ()=> {
         chick_num : chicken_info.chicken_num
     }
 
-    sched_list.forEach(scheudle => {
+    if(sched_list.length > 0){
+        sched_list.forEach(scheudle => {
+    
+    
+            cron.schedule( getTime(scheudle.timestamp), ()=>{
+    
+                sendPushNotification("Feeding Chickens");
+    
+                console.log("Attempting to send messange [Ably MQTT]")
+            
+                try {
+                    sched_channel.publish('feeding', message, (err) => {
+                        if (err) {
+                          console.error('Failed to publish message:', err);
+                          return res.status(500).send('Error publishing message');
+                        }
+                    
+                        console.log('Message published successfully:', message);
+                        res.status(200).send('Feeding function triggered successfully');
+                      });
+                    
+                } catch (error) {
+                    console.log(error)
+                }
+            })
+    
+        });
+    }
 
-
-        cron.schedule( getTime(scheudle.timestamp), ()=>{
-
-            sendPushNotification("Feeding Chickens");
-
-            console.log("Attempting to send messange [Ably MQTT]")
-        
-            try {
-                sched_channel.publish('feeding', message, (err) => {
-                    if (err) {
-                      console.error('Failed to publish message:', err);
-                      return res.status(500).send('Error publishing message');
-                    }
-                
-                    console.log('Message published successfully:', message);
-                    res.status(200).send('Feeding function triggered successfully');
-                  });
-                
-            } catch (error) {
-                console.log(error)
-            }
-        })
-
-    });
 
 }
 
