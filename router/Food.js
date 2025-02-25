@@ -29,7 +29,7 @@ feeding_schedule.on('value', snapshot =>{
     feeding_schedule_list = snapshot.val()
 
     console.log('detecting new data...')
-
+    setupSchedules()
     scheudleFood()
 
 })
@@ -41,6 +41,44 @@ const getTime = (time) =>{
     const hours = date.getHours()
 
     return `${minues} ${hours} * * *`
+}
+
+
+
+let activeSchedules = new Map()
+
+
+const get_schedules = () =>{
+
+    if(feeding_schedule_list != null){
+        const sched_list = Object.keys(feeding_schedule_list).map(key =>({
+            id : key,
+            ...feeding_schedule_list[key]
+        }))
+        return sched_list
+    }
+    return null
+}
+
+
+
+
+const setupSchedules = ()=>{
+
+    const schedule = get_schedules()
+
+    if(schedule != null){
+        
+        activeSchedules.forEach((job, id)=>{
+            if(schedule.some((s)=> s.id === id)){
+                console.log(`Stopping job: ${id}`)
+                job.stop()
+                activeSchedules.delete(id)
+            }
+        })
+
+    }
+
 }
 
 
@@ -56,15 +94,12 @@ const scheudleFood = ()=> {
     
     if(feeding_schedule_list != null){
 
-        const sched_list = Object.keys(feeding_schedule_list).map(key =>({
-            id : key,
-            ...feeding_schedule_list[key]
-        }))
+       
 
         sched_list.forEach(scheudle => {
     
     
-            cron.schedule( getTime(scheudle.timestamp), ()=>{
+            const job = cron.schedule( getTime(scheudle.timestamp), ()=>{
     
                 sendPushNotification("Feeding Chickens");
     
@@ -85,6 +120,8 @@ const scheudleFood = ()=> {
                     console.log(error)
                 }
             })
+
+            activeSchedules.set(scheudle.id, job)
     
         });
     }
