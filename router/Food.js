@@ -94,9 +94,11 @@ const scheudleFood = ()=> {
     
     if(feeding_schedule_list != null){
 
+        const scheduleList = get_schedules()
+
        
 
-        sched_list.forEach(scheudle => {
+        scheduleList.forEach(scheudle => {
     
     
             const job = cron.schedule( getTime(scheudle.timestamp), ()=>{
