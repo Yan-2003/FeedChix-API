@@ -15,7 +15,7 @@ function getScheduleDay(date) {
   return `0 ${inputDate.getMinutes()} ${inputDate.getHours()} * * ${inputDate.getDay()}`
 }
 
-cron.schedule("* * * * *" , ()=>{
+cron.schedule("*/2 * * * *" , ()=>{
     chicken_info.on('value', snapshot => {
         chickenInfo= snapshot.val()
         

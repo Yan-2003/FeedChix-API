@@ -29,7 +29,6 @@ feeding_schedule.on('value', snapshot =>{
     feeding_schedule_list = snapshot.val()
 
     console.log('detecting new data...')
-    setupSchedules()
     scheudleFood()
 
 })
@@ -67,8 +66,9 @@ const setupSchedules = ()=>{
 
     const schedule = get_schedules()
 
+    console.log(schedule)
+
     if(schedule != null){
-        
         activeSchedules.forEach((job, id)=>{
             if(schedule.some((s)=> s.id === id)){
                 console.log(`Stopping job: ${id}`)
@@ -76,14 +76,15 @@ const setupSchedules = ()=>{
                 activeSchedules.delete(id)
             }
         })
-
     }
 
 }
 
 
+
+
 const scheudleFood = ()=> {
-    console.log("fedding...")
+    console.log("Load Feeding Schedule....")
 
     
     let message = {
@@ -96,11 +97,10 @@ const scheudleFood = ()=> {
 
         const scheduleList = get_schedules()
 
-       
-
         scheduleList.forEach(scheudle => {
     
-    
+            console.log('Schedule Feeding :' , scheudle.timestamp)
+
             const job = cron.schedule( getTime(scheudle.timestamp), ()=>{
     
                 sendPushNotification("Feeding Chickens");
@@ -126,6 +126,8 @@ const scheudleFood = ()=> {
             activeSchedules.set(scheudle.id, job)
     
         });
+    }else{
+        console.log('No Schedule...')
     }
 
 
@@ -143,6 +145,8 @@ router.get('/weight', (req, res)=>{
 })
 
 router.post('/add_schedule', (req, res)=>{
+
+    setupSchedules()
 
     console.log(req.body)
 
@@ -170,6 +174,8 @@ router.delete('/delete_schedule/schedules/:id', async (req ,res)=>{
 
     console.log('Deleteding an Item')
 
+    setupSchedules()
+
     const schedule_id = req.params.id
 
     try {
@@ -180,7 +186,7 @@ router.delete('/delete_schedule/schedules/:id', async (req ,res)=>{
         console.log(error)
     }
 
-    console.log(schedule_id)
+    console.log("Item Deleted:" ,schedule_id)
 
     return res.json("Item Deleted")    
 })
