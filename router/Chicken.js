@@ -4,6 +4,7 @@ const ably = require('../controller/Ably')
 const database = require('../Database/Firebase')
 const light_auto_channel = ably('esp32')
 const cron  = require('node-cron')
+const sendPushNotification = require('../controller/Notification')
 
 const chicken_info = database.ref('chicken_info')
 
@@ -52,6 +53,8 @@ chicken_info.on('value', snapshot =>{
             week_age : new_week_age.toString()
         })
 
+        sendPushNotification("Chicken is in week : ", chickenInfo.week_age);
+
         console.log("chicken week age increase")
     
     })
@@ -71,6 +74,7 @@ router.post('/set_chicken', (req, res)=>{
         console.log(error)
     })
 
+    
     return res.json({message : "set checkin info"})
 })
 
