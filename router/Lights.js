@@ -8,6 +8,7 @@ const database = require('../Database/Firebase')
 const sendPushNotification = require('../controller/Notification')
 let light_status = ""
 const schedule = database.ref('light_schedule')
+const light_options  = database.ref('light_options')
 
 router.get('/status', (req, res)=>{
 
@@ -88,61 +89,67 @@ let LightSchedule;
 schedule.on('value', snapshot => {
     LightSchedule = snapshot.val()
 
-    cron.schedule( getTime(LightSchedule.turn_on) , ()=>{
+    if(LightSchedule.turn_on && LightSchedule.turn_off != null){
 
-        console.log("Attempting to send messange [Ably MQTT]: Turn on Light")
+        cron.schedule( getTime(LightSchedule.turn_on) , ()=>{
+    
+            console.log("Attempting to send messange [Ably MQTT]: Turn on Light")
+    
+            const payload = {
+                functionName : "light",
+                status : "ON"
+            }
+    
+            sendPushNotification("Turning Lights On ")
+    
+            try {
+                light_channel.publish('light', payload, (err) => {
+                    if (err) {
+                    console.error('Failed to publish message:', err);
+                    return res.status(500).send('Error publishing message');
+                    }
+                    console.log('Message published successfully:', message);
+                    res.status(200).send('Feeding function triggered successfully');
+                });
+                
+            } catch (error) {
+                console.log(error)
+            }
+        })
+    
+    
+        cron.schedule( getTime(LightSchedule.turn_off) , ()=>{
+    
+            console.log("Attempting to send messange [Ably MQTT] : Turn off Light")
+    
+            const payload = {
+                functionName : "light",
+                status : "OFF"
+            }
+    
+            sendPushNotification("Turning Lights Off ")
+    
+    
+            try {
+                light_channel.publish('light', payload, (err) => {
+                    if (err) {
+                    console.error('Failed to publish message:', err);
+                    return res.status(500).send('Error publishing message');
+                    }
+                    console.log('Message published successfully:', message);
+                    res.status(200).send('Feeding function triggered successfully');
+                });
+                
+            } catch (error) {
+                console.log(error)
+            }
+        })
+    
+        console.log('Data updated in real-time:', LightSchedule);
 
-        const payload = {
-            functionName : "light",
-            status : "ON"
-        }
 
-        sendPushNotification("Turning Lights On ")
+    }
 
-        try {
-            light_channel.publish('light', payload, (err) => {
-                if (err) {
-                console.error('Failed to publish message:', err);
-                return res.status(500).send('Error publishing message');
-                }
-                console.log('Message published successfully:', message);
-                res.status(200).send('Feeding function triggered successfully');
-            });
-            
-        } catch (error) {
-            console.log(error)
-        }
-    })
-
-
-    cron.schedule( getTime(LightSchedule.turn_off) , ()=>{
-
-        console.log("Attempting to send messange [Ably MQTT] : Turn off Light")
-
-        const payload = {
-            functionName : "light",
-            status : "OFF"
-        }
-
-        sendPushNotification("Turning Lights Off ")
-
-
-        try {
-            light_channel.publish('light', payload, (err) => {
-                if (err) {
-                console.error('Failed to publish message:', err);
-                return res.status(500).send('Error publishing message');
-                }
-                console.log('Message published successfully:', message);
-                res.status(200).send('Feeding function triggered successfully');
-            });
-            
-        } catch (error) {
-            console.log(error)
-        }
-    })
-
-    console.log('Data updated in real-time:', LightSchedule);
 }) 
 
 
@@ -154,5 +161,48 @@ const getTime = (time) =>{
 
     return `${minues} ${hours} * * *`
 }
+
+
+/* Light Options */
+
+
+router.post('/autoLightTemp', (req, res)=>{
+
+    light_options.set({
+        autoLightTemp : req.body.autoLightTemp,
+    }).then(()=>{
+        console.log("set the light to auto recommend using temp.")
+    }).catch((error)=>{
+        console.log("error: ", error)
+    })
+
+})
+
+
+let var_light_options;
+
+light_options.on('value', snapshot =>{
+    var_light_options = snapshot.val()
+})
+
+router.get('/get/lightOptions', (req, res) =>{
+
+    return res.json(var_light_options)
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;
