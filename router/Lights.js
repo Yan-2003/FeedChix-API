@@ -190,7 +190,7 @@ router.get('/get/lightOptions', (req, res) =>{
     return res.json(var_light_options)
 
 })
-
+ 
 
 
 
