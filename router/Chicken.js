@@ -84,16 +84,45 @@ cron.schedule("*/2 * * * *" , ()=>{
     chicken_info.on('value', snapshot => {
         chickenInfo= snapshot.val()
 
+        const payload = {
+            functionName : "light",
+            status : "ON"
+        }
+
         if(autoRecTemp.autoLightTemp != true){
             if(light_status == "ON" &&light_power == 40 && temperature > recommended_temp[chickenInfo.week_age]){
                 sendPushNotification("Chicken Temperature is High ♨️ recommend to turn off light.")
-            }else if(light_status == "OFF" && temperature > recommended_temp[chickenInfo.week_age]){
+            }else if(light_status == "OFF" && temperature < recommended_temp[chickenInfo.week_age]){
                 sendPushNotification("Chicken Temperature is Low ❄️ recommend to turn on light.")
             }else{
                 adjust_light()
             }
         }else{
-            adjust_light()
+            if(light_status == "ON" &&light_power == 40 && temperature > recommended_temp[chickenInfo.week_age]){
+                payload.status = 'OFF'
+                if(light_status != 'OFF'){
+                    light_auto_channel.publish('light', payload, (err)=>{
+                        if(err){
+                            console.log("Failed to publish message: ", err)
+                        }
+                        console.log("Message published successfully")
+                    })
+                    sendPushNotification("Chicken Temperature is High ♨️ auto turn off light.")
+                }
+            }else if(light_status == "OFF" && temperature < recommended_temp[chickenInfo.week_age]){
+                if(light_status != 'ON'){
+                    light_auto_channel.publish('light', payload, (err)=>{
+                        if(err){
+                            console.log("Failed to publish message: ", err)
+                        }
+                        console.log("Message published successfully")
+                    })
+                    sendPushNotification("Chicken Temperature is Low ❄️ auto turn on light.")
+                }
+
+            }else{
+                adjust_light()
+            }
         }
 
  

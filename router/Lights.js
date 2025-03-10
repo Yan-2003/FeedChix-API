@@ -45,7 +45,7 @@ router.get('/on', (req , res)=>{
             console.error('Failed to publish message:', err)
             return res.status(500).send('Error publishing message');
         }
-        console.log('Message published successfully:', message);
+        console.log('Message published successfully:');
     })
     
     return res.status(200).json({message : "light successfully turn on"});
@@ -64,7 +64,7 @@ router.get('/off', (req , res)=>{
             console.error('Failed to publish message:', err)
             return res.status(500).send('Error publishing message');
         }
-        console.log('Message published successfully:', message);
+        console.log('Message published successfully:');
     })
     return res.status(200).json({message : "light successfully turn off"});
 })
