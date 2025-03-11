@@ -9,13 +9,13 @@ const sendPushNotification = require('../controller/Notification')
 
 const chicken_info = database.ref('chicken_info')
 
-const auto_recommend_temp = database.ref('light_options')
+const light_options = database.ref('light_options')
 
 let chickenInfo
 
 let autoRecTemp
 
-auto_recommend_temp.on('value', snapshot =>{
+light_options.on('value', snapshot =>{
     autoRecTemp = snapshot.val()
 })
 

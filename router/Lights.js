@@ -166,10 +166,11 @@ const getTime = (time) =>{
 /* Light Options */
 
 
-router.post('/autoLightTemp', (req, res)=>{
+router.post('/lightOptions', (req, res)=>{
 
     light_options.set({
         autoLightTemp : req.body.autoLightTemp,
+        silentNotification : req.body.silentNotification,
     }).then(()=>{
         console.log("set the light to auto recommend using temp.")
     }).catch((error)=>{
