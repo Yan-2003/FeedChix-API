@@ -171,8 +171,9 @@ router.post('/lightOptions', (req, res)=>{
     light_options.set({
         autoLightTemp : req.body.autoLightTemp,
         silentNotification : req.body.silentNotification,
+        disableSchedule : req.body.disableSchedule,
     }).then(()=>{
-        console.log("set the light to auto recommend using temp.")
+        console.log("updated the lights options")
     }).catch((error)=>{
         console.log("error: ", error)
     })

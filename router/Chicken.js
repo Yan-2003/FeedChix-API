@@ -90,10 +90,12 @@ cron.schedule("*/2 * * * *" , ()=>{
         }
 
         if(autoRecTemp.autoLightTemp != true){
-            if(light_status == "ON" &&light_power == 40 && temperature > recommended_temp[chickenInfo.week_age]){
-                sendPushNotification("Chicken Temperature is High ♨️ recommend to turn off light.")
+            if(light_status == "ON" &&light_power == 20 && temperature > recommended_temp[chickenInfo.week_age]){
+                if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️ recommend to turn off light.");
+
             }else if(light_status == "OFF" && temperature < recommended_temp[chickenInfo.week_age]){
-                sendPushNotification("Chicken Temperature is Low ❄️ recommend to turn on light.")
+                if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is Low ❄️ recommend to turn on light.");
+
             }else{
                 adjust_light()
             }
@@ -107,7 +109,8 @@ cron.schedule("*/2 * * * *" , ()=>{
                         }
                         console.log("Message published successfully")
                     })
-                    sendPushNotification("Chicken Temperature is High ♨️ auto turn off light.")
+                    if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️ auto turn off light.");
+                    
                 }
             }else if(light_status == "OFF" && temperature < recommended_temp[chickenInfo.week_age]){
                 if(light_status != 'ON'){
@@ -117,7 +120,7 @@ cron.schedule("*/2 * * * *" , ()=>{
                         }
                         console.log("Message published successfully")
                     })
-                    sendPushNotification("Chicken Temperature is Low ❄️ auto turn on light.")
+                    if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is Low ❄️ auto turn on light.");
                 }
 
             }else{
@@ -125,7 +128,6 @@ cron.schedule("*/2 * * * *" , ()=>{
             }
         }
 
- 
         console.log("adjusting light intensety.")
     })
 })
