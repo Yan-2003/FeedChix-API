@@ -72,7 +72,7 @@ const setupSchedules = ()=>{
         activeSchedules.forEach((job, id)=>{
             if(schedule.some((s)=> s.id === id)){
                 console.log(`Stopping job: ${id}`)
-                job.stop()
+                job.stop()  
                 activeSchedules.delete(id)
             }
         })

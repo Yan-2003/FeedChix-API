@@ -13,10 +13,10 @@ const light_options = database.ref('light_options')
 
 let chickenInfo
 
-let autoRecTemp
+let lightOptions
 
 light_options.on('value', snapshot =>{
-    autoRecTemp = snapshot.val()
+    lightOptions = snapshot.val()
 })
 
 
@@ -89,7 +89,7 @@ cron.schedule("*/2 * * * *" , ()=>{
             status : "ON"
         }
 
-        if(autoRecTemp.autoLightTemp != true){
+        if(lightOptions.autoLightTemp != true){
             if(light_status == "ON" &&light_power == 20 && temperature > recommended_temp[chickenInfo.week_age]){
                 if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️ recommend to turn off light.");
 

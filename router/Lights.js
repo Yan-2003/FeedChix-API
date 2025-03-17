@@ -10,10 +10,12 @@ let light_status = ""
 const schedule = database.ref('light_schedule')
 const light_options  = database.ref('light_options')
 
+
 router.get('/status', (req, res)=>{
 
     channel.subscribe((msg)=>{
         sensors_status = JSON.parse(Buffer.from(msg.data).toString())
+
         light_status = sensors_status.light_status
     })
     
@@ -89,69 +91,87 @@ let LightSchedule;
 schedule.on('value', snapshot => {
     LightSchedule = snapshot.val()
 
-    if(LightSchedule.turn_on && LightSchedule.turn_off != null){
+    if(LightSchedule.turn_on && LightSchedule.turn_off != null ){
 
-        cron.schedule( getTime(LightSchedule.turn_on) , ()=>{
-    
-            console.log("Attempting to send messange [Ably MQTT]: Turn on Light")
-    
-            const payload = {
-                functionName : "light",
-                status : "ON"
-            }
-    
-            sendPushNotification("Turning Lights On ")
-    
-            try {
-                light_channel.publish('light', payload, (err) => {
-                    if (err) {
-                    console.error('Failed to publish message:', err);
-                    return res.status(500).send('Error publishing message');
-                    }
-                    console.log('Message published successfully:', message);
-                    res.status(200).send('Feeding function triggered successfully');
-                });
-                
-            } catch (error) {
-                console.log(error)
-            }
-        })
-    
-    
-        cron.schedule( getTime(LightSchedule.turn_off) , ()=>{
-    
-            console.log("Attempting to send messange [Ably MQTT] : Turn off Light")
-    
-            const payload = {
-                functionName : "light",
-                status : "OFF"
-            }
-    
-            sendPushNotification("Turning Lights Off ")
-    
-    
-            try {
-                light_channel.publish('light', payload, (err) => {
-                    if (err) {
-                    console.error('Failed to publish message:', err);
-                    return res.status(500).send('Error publishing message');
-                    }
-                    console.log('Message published successfully:', message);
-                    res.status(200).send('Feeding function triggered successfully');
-                });
-                
-            } catch (error) {
-                console.log(error)
-            }
-        })
-    
         console.log('Data updated in real-time:', LightSchedule);
-
 
     }
 
 }) 
 
+/* Function to add Schedule Lights */
+
+let turn_on_lights = cron.schedule('* * * * * *', () => {
+    console.log('Task running...');
+});
+
+let turn_off_lights = cron.schedule('* * * * * *', () => {
+    console.log('Task running...');
+});;
+
+const schedLight = () =>{
+
+    console.log("Task schedule running.....")
+
+    turn_on_lights = cron.schedule( getTime(LightSchedule.turn_on) , ()=>{
+    
+        console.log("Attempting to send messange [Ably MQTT]: Turn on Light")
+    
+        const payload = {
+            functionName : "light",
+            status : "ON"
+        }
+    
+        sendPushNotification("Turning Lights On ")
+    
+        try {
+            light_channel.publish('light', payload, (err) => {
+                if (err) {
+                console.error('Failed to publish message:', err);
+                return res.status(500).send('Error publishing message');
+                }
+                console.log('Message published successfully:', message);
+                res.status(200).send('Feeding function triggered successfully');
+            });
+            
+        } catch (error) {
+            console.log(error)
+        }
+    })
+
+    turn_off_lights =  cron.schedule( getTime(LightSchedule.turn_off) , ()=>{
+    
+        console.log("Attempting to send messange [Ably MQTT] : Turn off Light")
+    
+        const payload = {
+            functionName : "light",
+            status : "OFF"
+        }
+    
+        sendPushNotification("Turning Lights Off ")
+    
+    
+        try {
+            light_channel.publish('light', payload, (err) => {
+                if (err) {
+                console.error('Failed to publish message:', err);
+                return res.status(500).send('Error publishing message');
+                }
+                console.log('Message published successfully:', message);
+                res.status(200).send('Feeding function triggered successfully');
+            });
+            
+        } catch (error) {
+            console.log(error)
+        }
+    })
+
+}
+const setupScheduleLight = () =>{
+    turn_off_lights.stop()
+    turn_on_lights.stop()
+    console.log("Stopping scheduled lights.......")
+}
 
 const getTime = (time) =>{
     const date = new Date(time)
@@ -180,11 +200,17 @@ router.post('/lightOptions', (req, res)=>{
 
 })
 
-
 let var_light_options;
 
 light_options.on('value', snapshot =>{
     var_light_options = snapshot.val()
+
+    if(var_light_options.disableSchedule == false){
+        setupScheduleLight()
+        schedLight();
+    }else{
+        setupScheduleLight()
+    }
 })
 
 router.get('/get/lightOptions', (req, res) =>{
@@ -192,19 +218,9 @@ router.get('/get/lightOptions', (req, res) =>{
     return res.json(var_light_options)
 
 })
- 
 
 
-
-
-
-
-
-
-
-
-
-
+/* --------------------------------------------------------------- */
 
 
 module.exports = router;
