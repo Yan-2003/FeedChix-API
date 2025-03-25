@@ -56,6 +56,7 @@ const get_schedules = () =>{
         }))
         return sched_list
     }
+    console.log(activeSchedules)
     return null
 }
 
@@ -90,8 +91,12 @@ const scheudleFood = ()=> {
     let message = {
         functionName : "feeding",
         age_week : chicken_info.week_age,
-        chick_num : chicken_info.chicken_num
+        chick_num : chicken_info.chicken_num,
+        sched_len : activeSchedules.length 
     }
+
+
+    console.log("message: ", message)
     
     if(feeding_schedule_list != null){
 

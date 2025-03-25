@@ -58,10 +58,20 @@ let temperature
 let light_status
 
 channel.subscribe((msg)=>{
-    sensors_status = JSON.parse(Buffer.from(msg.data).toString())
-    light_power = parseInt(sensors_status.light_power)    
-    temperature = parseFloat(sensors_status.temperature)
-    light_status = sensors_status.light_status
+    try {
+        const rawData = Buffer.from(msg.data).toString();
+        console.log("Received raw data:", rawData); // Debugging output
+
+        sensors_status = JSON.parse(rawData); // Attempt to parse JSON
+
+        // Extract values
+        light_power = parseInt(sensors_status.light_power);
+        temperature = parseFloat(sensors_status.temperature);
+        light_status = sensors_status.light_status;
+
+    } catch (error) {
+        console.error("JSON parsing error:", error.message);
+    }
 })
 
 const adjust_light = () =>{
