@@ -84,15 +84,14 @@ const setupSchedules = ()=>{
 
 
 
-const scheudleFood = ()=> {
+const scheudleFood = async ()=> {
     console.log("Load Feeding Schedule....")
 
     
     let message = {
         functionName : "feeding",
-        age_week : chicken_info.week_age,
-        chick_num : chicken_info.chicken_num,
-        sched_len : activeSchedules.length 
+        age_week : await chicken_info.week_age,
+        chick_num : await chicken_info.chicken_num,
     }
 
 
