@@ -90,7 +90,7 @@ const adjust_light = () =>{
 }
 
 
-cron.schedule("*/2 * * * *" , ()=>{
+cron.schedule("*/5 * * * *" , ()=>{
     chicken_info.on('value', snapshot => {
         chickenInfo= snapshot.val()
 
