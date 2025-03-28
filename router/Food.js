@@ -87,15 +87,17 @@ const setupSchedules = ()=>{
 const scheudleFood = async ()=> {
     console.log("Load Feeding Schedule....")
 
+    const data = await chicken_info.once('value')
+    const chicken_data = data.val()
     
     let message = {
         functionName : "feeding",
-        age_week : await chicken_info.week_age,
-        chick_num : await chicken_info.chicken_num,
+        age_week : chicken_data.week_age,
+        chick_num : chicken_data.chicken_num,
     }
 
 
-    console.log("message: ", message)
+    console.log("message: ", message, "\n")
     
     if(feeding_schedule_list != null){
 
@@ -194,6 +196,13 @@ router.delete('/delete_schedule/schedules/:id', async (req ,res)=>{
 
     return res.json("Item Deleted")    
 })
+
+cron.schedule("*/20 * * * *", ()=>{
+    if(currentWeight < 1){
+        sendPushNotification("Chicken is Low on Food 🍽️")
+    }
+})
+
 
 
 

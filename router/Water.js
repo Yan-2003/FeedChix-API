@@ -21,7 +21,7 @@ module.exports = router
 
 cron.schedule("*/20 * * * *", ()=>{
     if(currentCapacity < 10){
-        sendPushNotification("Chicken is Low in Water 💧")
+        sendPushNotification("Chicken is Low on Water 💧")
     }   
 })
 
