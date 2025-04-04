@@ -6,11 +6,12 @@ const light_auto_channel = ably('esp32')
 const cron  = require('node-cron')
 const channel = ably('esp32/status')
 const sendPushNotification = require('../controller/Notification')
-
+const { GoogleSpreadsheet } = require('google-spreadsheet');
 const chicken_info = database.ref('chicken_info')
-
 const light_options = database.ref('light_options')
-
+const SHEET_ID = '1aIzKvOVf2uecfaBqwx0VdWfRDb97CeCMRRZ5PWD0_iA';
+const {JWT} = require('google-auth-library')
+const serviceAccount = JSON.parse(Buffer.from(process.env.SERVICE_ACCOUNT_JSON, 'base64').toString('utf-8'));
 let chickenInfo
 
 let lightOptions
@@ -18,7 +19,6 @@ let lightOptions
 light_options.on('value', snapshot =>{
     lightOptions = snapshot.val()
 })
-
 
 function getScheduleDay(date) {
   const inputDate = new Date(date)
@@ -69,10 +69,74 @@ channel.subscribe((msg)=>{
         temperature = parseFloat(sensors_status.temperature);
         light_status = sensors_status.light_status;
 
+        const sheet_log = async () =>{
+
+            try {
+        
+                const accessSheet = new JWT({
+                    email : serviceAccount.client_email,
+                    key : serviceAccount.private_key,
+                    scopes : ['https://www.googleapis.com/auth/spreadsheets'],
+                })
+        
+                const doc = new GoogleSpreadsheet(SHEET_ID, accessSheet)
+        
+                await doc.loadInfo(); // Load spreadsheet info
+            
+                const sheet = doc.sheetsByIndex[0];
+        
+                console.log({
+                    week_age : chickenInfo.week_age,
+                    chicken_num : chickenInfo.chicken_num,
+                    temperature : sensors_status.temperature,
+                    humidity : sensors_status.humidity,
+                    water_percent : sensors_status.water_capacity,
+                    food_storage : sensors_status.food_weight,
+                    light_intencity : light_power,
+                    light_status : light_status,
+                    light_auto_recommend : lightOptions.autoLightTemp,
+                    light_notification_silent : lightOptions.silentNotification,
+                })
+            
+            
+                await sheet.addRow({
+                    Timestamp: new Date().toISOString(),
+                    week_age : chickenInfo.week_age,
+                    chicken_num : chickenInfo.chicken_num,
+                    temperature : sensors_status.temperature,
+                    humidity : sensors_status.humidity,
+                    water_percent : sensors_status.water_capacity,
+                    food_storage : sensors_status.food_weight,
+                    light_intencity : light_power,
+                    light_status : light_status,
+                    light_auto_recommend : lightOptions.autoLightTemp,
+                    light_notification_silent : lightOptions.silentNotification,
+                });
+                
+                
+                console.log("Successfully Log to Google Sheet")
+        
+                
+            } catch (error) {
+                console.log("Faild to Log to Google Sheet: ",error)
+            }
+        }
+
+        cron.schedule("0 * * * *", ()=>{
+            console.log("Loggin.....")
+            sheet_log()
+        })
+
     } catch (error) {
         console.error("JSON parsing error:", error.message);
     }
 })
+
+// loggin to google sheet function
+
+
+
+
 
 const adjust_light = () =>{
     const payload = {
@@ -168,6 +232,5 @@ router.get('/', (req, res)=>{
 router.get('/status', (req, res)=>{
     return res.json(sensors_status)
 })
-
 
 module.exports = router;
