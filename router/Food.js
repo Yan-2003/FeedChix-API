@@ -197,7 +197,7 @@ router.delete('/delete_schedule/schedules/:id', async (req ,res)=>{
     return res.json("Item Deleted")    
 })
 
-cron.schedule("*/20 * * * *", ()=>{
+cron.schedule("0 * * * *", ()=>{
     if(currentWeight < 1){
         sendPushNotification("Chicken is Low on Food 🍽️")
     }

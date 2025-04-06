@@ -19,7 +19,7 @@ router.get('/capacity', (req, res)=>{
 
 module.exports = router
 
-cron.schedule("*/20 * * * *", ()=>{
+cron.schedule("0 * * * *", ()=>{
     if(currentCapacity < 10){
         sendPushNotification("Chicken is Low on Water 💧")
     }   
