@@ -69,64 +69,6 @@ channel.subscribe((msg)=>{
         temperature = parseFloat(sensors_status.temperature);
         light_status = sensors_status.light_status;
 
-        const sheet_log = async () =>{
-
-            try {
-        
-                const accessSheet = new JWT({
-                    email : serviceAccount.client_email,
-                    key : serviceAccount.private_key,
-                    scopes : ['https://www.googleapis.com/auth/spreadsheets'],
-                })
-        
-                const doc = new GoogleSpreadsheet(SHEET_ID, accessSheet)
-        
-                await doc.loadInfo(); // Load spreadsheet info
-            
-                const sheet = doc.sheetsByIndex[0];
-        
-                console.log({
-                    week_age : chickenInfo.week_age,
-                    chicken_num : chickenInfo.chicken_num,
-                    temperature : sensors_status.temperature,
-                    humidity : sensors_status.humidity,
-                    water_percent : sensors_status.water_capacity,
-                    food_storage : sensors_status.food_weight,
-                    light_intencity : light_power,
-                    light_status : light_status,
-                    light_auto_recommend : lightOptions.autoLightTemp,
-                    light_notification_silent : lightOptions.silentNotification,
-                })
-            
-            
-                await sheet.addRow({
-                    Timestamp: new Date().toISOString(),
-                    week_age : chickenInfo.week_age,
-                    chicken_num : chickenInfo.chicken_num,
-                    temperature : sensors_status.temperature,
-                    humidity : sensors_status.humidity,
-                    water_percent : sensors_status.water_capacity,
-                    food_storage : sensors_status.food_weight,
-                    light_intencity : light_power,
-                    light_status : light_status,
-                    light_auto_recommend : lightOptions.autoLightTemp,
-                    light_notification_silent : lightOptions.silentNotification,
-                });
-                
-                
-                console.log("Successfully Log to Google Sheet")
-        
-                
-            } catch (error) {
-                console.log("Faild to Log to Google Sheet: ",error)
-            }
-        }
-
-        cron.schedule("0 * * * *", ()=>{
-            console.log("Loggin.....")
-            sheet_log()
-        })
-
     } catch (error) {
         console.error("JSON parsing error:", error.message);
     }
@@ -134,6 +76,49 @@ channel.subscribe((msg)=>{
 
 // loggin to google sheet function
 
+
+const sheet_log = async () =>{
+
+    const chicken_data = chicken_info.once('value')
+    const chicken = (await chicken_data).val()
+
+    try {
+
+        const accessSheet = new JWT({
+            email : serviceAccount.client_email,
+            key : serviceAccount.private_key,
+            scopes : ['https://www.googleapis.com/auth/spreadsheets'],
+        })
+
+        const doc = new GoogleSpreadsheet(SHEET_ID, accessSheet)
+
+        await doc.loadInfo(); // Load spreadsheet info
+    
+        const sheet = doc.sheetsByIndex[0];
+
+        const sheet_row = {
+            Timestamp: new Date().toISOString(),
+            week_age : chicken.week_age,
+            chicken_num : chicken.chicken_num,
+            temperature : sensors_status.temperature,
+            humidity : sensors_status.humidity,
+            water_percent : sensors_status.water_capacity,
+            food_storage : sensors_status.food_weight,
+            light_intencity : light_power,
+            light_status : light_status,
+            light_auto_recommend : lightOptions.autoLightTemp,
+            light_notification_silent : lightOptions.silentNotification,
+        }
+        
+        console.log("Added Row: ", sheet_row)
+    
+        await sheet.addRow(sheet_row);
+        console.log("Successfully Log to Google Sheet")
+        
+    } catch (error) {
+        console.log("Faild to Log to Google Sheet: ",error)
+    }
+}
 
 
 
@@ -143,7 +128,7 @@ const adjust_light = () =>{
         functionName : "auto_recommend_env",
         week_age : chickenInfo.week_age,
     }
-
+    
     light_auto_channel.publish('light_auto', payload, (err)=>{
         if(err){
             console.error('Failed to publish message:', err)
@@ -154,22 +139,24 @@ const adjust_light = () =>{
 }
 
 
+
+
 cron.schedule("*/2 * * * *" , ()=>{
     chicken_info.on('value', snapshot => {
         chickenInfo= snapshot.val()
-
+        
         const payload = {
             functionName : "light",
             status : "ON"
         }
-
+        
         if(lightOptions.autoLightTemp != true){
             if(light_status == "ON" &&light_power == 20 && temperature > recommended_temp[chickenInfo.week_age]){
                 if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️ recommend to turn off light.");
-
+                
             }else if(light_status == "OFF" && temperature < recommended_temp[chickenInfo.week_age]){
                 if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is Low ❄️ recommend to turn on light.");
-
+                
             }else{
                 adjust_light()
             }
@@ -201,14 +188,14 @@ cron.schedule("*/2 * * * *" , ()=>{
                 adjust_light()
             }
         }
-
+        
         console.log("adjusting light intensety.")
     })
 })
 
 
 router.post('/set_chicken', (req, res)=>{
-
+    
     chicken_info.set({
         week_age : req.body.week_age,
         chicken_num : req.body.chicken_num,
@@ -218,19 +205,25 @@ router.post('/set_chicken', (req, res)=>{
     }).catch((error)=>{
         console.log(error)
     })
-
+    
     
     return res.json({message : "set checkin info"})
 })
 
 
 router.get('/', (req, res)=>{
-
+    
     return res.json(chickenInfo)
 })
 
 router.get('/status', (req, res)=>{
+    
     return res.json(sensors_status)
+})
+
+cron.schedule("0 * * * *", ()=>{
+    sheet_log()
+    console.log("Added to Google Sheet Log....")
 })
 
 module.exports = router;
