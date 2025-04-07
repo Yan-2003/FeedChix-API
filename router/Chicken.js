@@ -151,7 +151,10 @@ cron.schedule("*/2 * * * *" , ()=>{
         }
         
         if(lightOptions.autoLightTemp != true){
-            if(light_status == "ON" &&light_power == 20 && temperature > recommended_temp[chickenInfo.week_age]){
+
+            console.log("in the false light auto: ", lightOptions.autoLightTemp)
+
+            if(light_status == "ON" &&light_power == 30 && temperature > recommended_temp[chickenInfo.week_age]){
                 if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️ recommend to turn off light.");
                 
             }else if(light_status == "OFF" && temperature < recommended_temp[chickenInfo.week_age]){
@@ -161,7 +164,11 @@ cron.schedule("*/2 * * * *" , ()=>{
                 adjust_light()
             }
         }else{
-            if(light_status == "ON" &&light_power == 40 && temperature > recommended_temp[chickenInfo.week_age]){
+
+            console.log("int the true light auto: ", lightOptions.autoLightTemp)
+
+
+            if(light_status == "ON" &&light_power == 30 && temperature > recommended_temp[chickenInfo.week_age]){
                 payload.status = 'OFF'
                 if(light_status != 'OFF'){
                     light_auto_channel.publish('light', payload, (err)=>{
@@ -203,7 +210,7 @@ router.post('/set_chicken', (req, res)=>{
     }).then(()=>{
         console.log("Set Chicken Info")
     }).catch((error)=>{
-        console.log(error)
+        console.log(error) 
     })
     
     

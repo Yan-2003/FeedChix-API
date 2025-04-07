@@ -1,15 +1,13 @@
+let recommend = 30;
+let temp = 40;
+let brightness = 30;
+if(recommend < temp && brightness > 30){
+    brightness -= 10
+}
 
-const sendPushNotification = require('./controller/Notification')
+if(recommend > temp && brightness < 90){
+    brightness += 10
+}
 
 
-sendPushNotification('Seding this notification of testing')
-
-
-return;
-/* 
-const date = new Date()
-
-
-console.log(date.toString())
-
- */
+console.log(brightness)
