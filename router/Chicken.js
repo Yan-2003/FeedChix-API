@@ -155,10 +155,10 @@ cron.schedule("*/2 * * * *" , ()=>{
             console.log("in the false light auto: ", lightOptions.autoLightTemp)
 
             if(light_status == "ON" &&light_power == 30 || temperature > recommended_temp[chickenInfo.week_age]){
-                if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️ recommend to turn off light.");
+                if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️");
                 
             }else if(light_status == "OFF" || temperature < recommended_temp[chickenInfo.week_age]){
-                if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is Low ❄️ recommend to turn on light.");
+                if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is Low ❄️");
                 
             }else{
                 adjust_light()
