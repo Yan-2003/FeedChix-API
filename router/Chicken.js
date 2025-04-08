@@ -138,7 +138,14 @@ const adjust_light = () =>{
     })
 }
 
-
+cron.schedule("*/20 * * * *", ()=>{
+    if(sensors_status.humidity > 80){
+        sendPushNotification("Chicken Humidity is High 💧")
+    }
+    if(sensors_status.humidity < 60){
+        sendPushNotification("Chicken Humidity is Low 💧")
+    }
+})
 
 
 cron.schedule("*/2 * * * *" , ()=>{
@@ -150,32 +157,34 @@ cron.schedule("*/2 * * * *" , ()=>{
             status : "ON"
         }
         
-        if(lightOptions.autoLightTemp != true){
+        if(lightOptions.autoLightTemp == false){
 
             console.log("in the false light auto: ", lightOptions.autoLightTemp)
 
-            if(light_status == "ON" &&light_power == 30 || temperature > recommended_temp[chickenInfo.week_age]){
+            if(light_status == "ON" && temperature > recommended_temp[chickenInfo.week_age]){
                 if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️");
                 
-            }else if(light_status == "OFF" || temperature < recommended_temp[chickenInfo.week_age]){
+            }else if(light_status == "OFF" && temperature < recommended_temp[chickenInfo.week_age]){
                 if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is Low ❄️");
                 
             }else{
                 adjust_light()
             }
-        }else{
+        }
+        
+        if(lightOptions.autoLightTemp == true){
 
             console.log("int the true light auto: ", lightOptions.autoLightTemp)
 
 
-            if(light_status == "ON" &&light_power == 30 && temperature > recommended_temp[chickenInfo.week_age]){
+            if(light_status == "ON" && light_power == 30 && temperature > recommended_temp[chickenInfo.week_age]){
                 payload.status = 'OFF'
                 if(light_status != 'OFF'){
                     light_auto_channel.publish('light', payload, (err)=>{
                         if(err){
                             console.log("Failed to publish message: ", err)
                         }
-                        console.log("Message published successfully")
+                        console.log("Message published successfully")   
                     })
                     if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️ auto turn off light.");
                     

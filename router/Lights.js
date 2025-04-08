@@ -220,7 +220,4 @@ router.get('/get/lightOptions', (req, res) =>{
 })
 
 
-/* --------------------------------------------------------------- */
-
-
 module.exports = router;
