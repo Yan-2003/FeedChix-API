@@ -145,6 +145,19 @@ cron.schedule("*/20 * * * *", ()=>{
     if(sensors_status.humidity < 60){
         sendPushNotification("Chicken Humidity is Low 💧")
     }
+
+    if(lightOptions.autoLightTemp == false){
+
+        if(light_status == "ON" && temperature > recommended_temp[chickenInfo.week_age]){
+            sendPushNotification("Chicken Temperature is High ♨️");
+            
+        }else if(light_status == "OFF" && temperature < recommended_temp[chickenInfo.week_age]){
+            sendPushNotification("Chicken Temperature is Low ❄️");
+            
+        }else{
+            adjust_light()
+        }
+    }
 })
 
 
@@ -156,20 +169,10 @@ cron.schedule("*/2 * * * *" , ()=>{
             functionName : "light",
             status : "ON"
         }
-        
+
         if(lightOptions.autoLightTemp == false){
 
-            console.log("in the false light auto: ", lightOptions.autoLightTemp)
-
-            if(light_status == "ON" && temperature > recommended_temp[chickenInfo.week_age]){
-                if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is High ♨️");
-                
-            }else if(light_status == "OFF" && temperature < recommended_temp[chickenInfo.week_age]){
-                if(light_options.silentNotification == false) sendPushNotification("Chicken Temperature is Low ❄️");
-                
-            }else{
-                adjust_light()
-            }
+            adjust_light()
         }
         
         if(lightOptions.autoLightTemp == true){

@@ -10,6 +10,7 @@ const sched_channel = ably('esp32')
 const database = require('../Database/Firebase')
 
 const feeding_schedule = database.ref('feeding_schedule');
+const food_store = database.ref('food_storage')
 
 let currentWeight = 0;
 
@@ -139,7 +140,16 @@ const scheudleFood = async ()=> {
 
 }
 
-router.get('/weight', (req, res)=>{
+router.get('/weight', async (req, res)=>{
+
+    const food_weight_data = food_store.once('value')
+    const weight = (await food_weight_data).val()
+
+    res.json({weight : weight})
+})
+
+
+router.get('/raw_weight', (req, res)=>{
 
     channel.subscribe((msg)=>{
         sensors_status = JSON.parse(Buffer.from(msg.data).toString())
@@ -201,6 +211,21 @@ cron.schedule("0 * * * *", ()=>{
     if(currentWeight < 1){
         sendPushNotification("Chicken is Low on Food 🍽️")
     }
+})
+
+
+router.post('/food_storage/setup', (req, res)=>{
+
+    channel.subscribe((msg)=>{
+        sensors_status = JSON.parse(Buffer.from(msg.data).toString())
+        currentWeight = sensors_status.food_weight
+    })
+
+    food_store.push({
+        food_weight : currentWeight 
+    })
+
+    res.json({message: "setup food weight.."})
 })
 
 
