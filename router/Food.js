@@ -145,9 +145,15 @@ router.get('/weight', async (req, res)=>{
     const food_weight_data = food_store.once('value')
     const weight = (await food_weight_data).val()
 
-    weight = weight.raw_weight == null ? 0 : weight.raw_weight 
+    const data = weight.raw_weight
 
-    res.json({weight : weight.food_weight})
+
+
+    if(data == null){
+        data = 0
+    }
+
+   res.json({weight : weight.data})
 })
 
 
