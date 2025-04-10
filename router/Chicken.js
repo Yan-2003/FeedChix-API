@@ -8,6 +8,7 @@ const channel = ably('esp32/status')
 const sendPushNotification = require('../controller/Notification')
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const chicken_info = database.ref('chicken_info')
+const food_storage = database.ref('food_storage')
 const light_options = database.ref('light_options')
 const SHEET_ID = '1aIzKvOVf2uecfaBqwx0VdWfRDb97CeCMRRZ5PWD0_iA';
 const {JWT} = require('google-auth-library')
@@ -82,6 +83,10 @@ const sheet_log = async () =>{
     const chicken_data = chicken_info.once('value')
     const chicken = (await chicken_data).val()
 
+    const food_weight = food_storage.once('value')
+    const food_weight_data = (await food_weight).val()
+
+
     try {
 
         const accessSheet = new JWT({
@@ -103,7 +108,7 @@ const sheet_log = async () =>{
             temperature : sensors_status.temperature,
             humidity : sensors_status.humidity,
             water_percent : sensors_status.water_capacity,
-            food_storage : sensors_status.food_weight,
+            food_storage : food_weight_data.food_weight,
             light_intencity : light_power,
             light_status : light_status,
             light_auto_recommend : lightOptions.autoLightTemp,

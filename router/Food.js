@@ -130,11 +130,10 @@ const scheudleFood = async ()=> {
                         new_weight = 0
                     }
 
-                    const new_food_weight = {
+                    food_store.set({
                         food_weight : new_weight
-                    }
-
-                    food_store.set(new_food_weight)
+                    })
+                    
                     console.log("updating food weight...")
                 } 
 
