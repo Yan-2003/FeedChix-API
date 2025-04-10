@@ -145,7 +145,7 @@ router.get('/weight', async (req, res)=>{
     const food_weight_data = food_store.once('value')
     const weight = (await food_weight_data).val()
 
-    res.json({weight : weight})
+    res.json({weight : weight.food_weight || 0})
 })
 
 
@@ -216,13 +216,9 @@ cron.schedule("0 * * * *", ()=>{
 
 router.post('/food_storage/setup', (req, res)=>{
 
-    channel.subscribe((msg)=>{
-        sensors_status = JSON.parse(Buffer.from(msg.data).toString())
-        currentWeight = sensors_status.food_weight
-    })
 
-    food_store.push({
-        food_weight : currentWeight 
+    food_store.set({
+        food_weight : req.body.raw_weight, 
     })
 
     res.json({message: "setup food weight.."})
