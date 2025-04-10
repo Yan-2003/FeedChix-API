@@ -86,6 +86,9 @@ const setupSchedules = ()=>{
 
 
 const scheudleFood = async ()=> {
+
+    const feeding_amount_per_chick = [30, 51, 88, 108, 126]
+
     console.log("Load Feeding Schedule....")
 
     const data = await chicken_info.once('value')
@@ -108,9 +111,24 @@ const scheudleFood = async ()=> {
     
             console.log('Schedule Feeding :' , scheudle.timestamp)
 
-            const job = cron.schedule( getTime(scheudle.timestamp), ()=>{
+            const job = cron.schedule( getTime(scheudle.timestamp), async ()=>{
     
                 sendPushNotification("Feeding Chickens");
+
+                // deduct amount of food in storage 
+
+                const food = food_store.once('value')
+                const data = (await food).val()
+
+                if(data.food_weight != 0){
+                    const new_food_weight = {
+                        food_weight : data.food_weight - (feeding_amount_per_chick[chicken.week_age] * chicken.chick_num  )
+                    }
+
+                    food_store.set(new_food_weight)
+                    console.log("updating food weight...")
+                } 
+
     
                 console.log("Attempting to send messange [Ably MQTT]")
             
@@ -227,8 +245,6 @@ router.post('/food_storage/setup', (req, res)=>{
 
     res.json({message: "setup food weight.."})
 })
-
-
 
 
 module.exports = router;
