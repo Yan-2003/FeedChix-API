@@ -120,6 +120,8 @@ const scheudleFood = async ()=> {
     
                     const food = food_store.once('value')
                     const data = (await food).val()
+
+                    console.log("Feeding Chicken deducting food weight...")
     
                     if(data.food_weight != 0){
     
@@ -134,6 +136,8 @@ const scheudleFood = async ()=> {
     
                         food_store.set({
                             food_weight : new_weight
+                        }).then(e =>{
+                            console.log(e)
                         })
                         
                         console.log("updating food weight...")
