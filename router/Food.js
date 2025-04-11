@@ -125,7 +125,7 @@ const scheudleFood = async ()=> {
     
                     if(food_weight_storage.food_weight != 0){
     
-                        let gram_feed = chicken.week_age > feeding_amount_per_chick.length ? feeding_amount_per_chick[feeding_amount_per_chick.length - 1] : feeding_amount_per_chick[chicken.week_age] 
+                        let gram_feed = chicken_data.week_age > feeding_amount_per_chick.length ? feeding_amount_per_chick[feeding_amount_per_chick.length - 1] : feeding_amount_per_chick[chicken_data.week_age] 
     
                         let new_weight = food_weight_storage.food_weight - (gram_feed * chicken.chick_num  )
     
