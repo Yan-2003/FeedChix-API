@@ -118,8 +118,8 @@ const scheudleFood = async ()=> {
                 try {
                     // deduct amount of food in storage 
     
-                    const food = food_store.once('value')
-                    const data = (await food).val()
+                    const food = await food_store.once('value')
+                    const data = food.val()
 
                     console.log("Feeding Chicken deducting food weight...")
     
