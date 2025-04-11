@@ -115,32 +115,32 @@ const scheudleFood = async ()=> {
     
                 sendPushNotification("Feeding Chickens");
 
-                // deduct amount of food in storage 
-
-                const food = food_store.once('value')
-                const data = (await food).val()
-
-                if(data.food_weight != 0){
-
-                    let gram_feed = chicken.week_age > feeding_amount_per_chick.length ? feeding_amount_per_chick[feeding_amount_per_chick.length - 1] : feeding_amount_per_chick[chicken.week_age] 
-
-                    let new_weight = data.food_weight - (gram_feed * chicken.chick_num  )
-
-                    if(new_weight < 0){
-                        new_weight = 0
-                    }
-
-                    food_store.set({
-                        food_weight : new_weight
-                    })
-                    
-                    console.log("updating food weight...")
-                } 
-
-    
-                console.log("Attempting to send messange [Ably MQTT]")
-            
                 try {
+                    // deduct amount of food in storage 
+    
+                    const food = food_store.once('value')
+                    const data = (await food).val()
+    
+                    if(data.food_weight != 0){
+    
+                        let gram_feed = chicken.week_age > feeding_amount_per_chick.length ? feeding_amount_per_chick[feeding_amount_per_chick.length - 1] : feeding_amount_per_chick[chicken.week_age] 
+    
+                        let new_weight = data.food_weight - (gram_feed * chicken.chick_num  )
+    
+                        if(new_weight < 0){
+                            new_weight = 0
+                        }
+                        console.log("New Weight of food storage.", new_weight)
+    
+                        food_store.set({
+                            food_weight : new_weight
+                        })
+                        
+                        console.log("updating food weight...")
+                    } 
+
+                    console.log("Attempting to send messange [Ably MQTT]")
+
                     sched_channel.publish('feeding', message, (err) => {
                         if (err) {
                           console.error('Failed to publish message:', err);
