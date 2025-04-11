@@ -118,30 +118,31 @@ const scheudleFood = async ()=> {
                 try {
                     // deduct amount of food in storage 
     
-                    const food = await food_store.once('value')
-                    const data = food.val()
+                    food_store.once('value').then(data =>{
+                        const weight = data.val()
+                            if(weight.food_weight != 0){
+            
+                                let gram_feed = chicken.week_age > feeding_amount_per_chick.length ? feeding_amount_per_chick[feeding_amount_per_chick.length - 1] : feeding_amount_per_chick[chicken.week_age] 
+            
+                                let new_weight = weight.food_weight - (gram_feed * chicken.chick_num  )
+            
+                                if(new_weight < 0){
+                                    new_weight = 0
+                                }
+                                console.log("New Weight of food storage.", new_weight)
+            
+                                food_store.set({
+                                    food_weight : new_weight
+                                }).then(e =>{
+                                    console.log(e)
+                                })
+                                
+                                console.log("updating food weight...")
+                            } 
+                    })
 
                     console.log("Feeding Chicken deducting food weight...")
     
-                    if(data.food_weight != 0){
-    
-                        let gram_feed = chicken.week_age > feeding_amount_per_chick.length ? feeding_amount_per_chick[feeding_amount_per_chick.length - 1] : feeding_amount_per_chick[chicken.week_age] 
-    
-                        let new_weight = data.food_weight - (gram_feed * chicken.chick_num  )
-    
-                        if(new_weight < 0){
-                            new_weight = 0
-                        }
-                        console.log("New Weight of food storage.", new_weight)
-    
-                        food_store.set({
-                            food_weight : new_weight
-                        }).then(e =>{
-                            console.log(e)
-                        })
-                        
-                        console.log("updating food weight...")
-                    } 
 
                     console.log("Attempting to send messange [Ably MQTT]")
 
