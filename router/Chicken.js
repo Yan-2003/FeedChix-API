@@ -108,7 +108,7 @@ const sheet_log = async () =>{
             temperature : sensors_status.temperature,
             humidity : sensors_status.humidity,
             water_percent : sensors_status.water_capacity,
-            food_storage : food_weight_data.food_weight,
+            food_storage : food_weight_data.food_weight.toFixed(2),
             light_intencity : light_power,
             light_status : light_status,
             light_auto_recommend : lightOptions.autoLightTemp,
