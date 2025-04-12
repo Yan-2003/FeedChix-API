@@ -123,7 +123,7 @@ const scheudleFood = async ()=> {
     
                     console.log("Feeding Chicken deducting food weight...")
     
-                    if(food_weight_storage.food_weight != 0){
+                    if(food_weight_storage.food_weight > 0){
                         
                         let gram_feed = chicken_data.week_age > feeding_amount_per_chick.length ? feeding_amount_per_chick[feeding_amount_per_chick.length - 1] : feeding_amount_per_chick[chicken_data.week_age] 
                         
