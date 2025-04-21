@@ -183,6 +183,17 @@ const getTime = (time) =>{
 }
 
 
+const format_time = (time) =>{
+    const date = new Date(time)
+
+    const minues = date.getMinutes()
+    const hours = date.getHours()
+
+    return `${hours}:${minues}`
+}
+
+
+
 /* Light Options */
 
 

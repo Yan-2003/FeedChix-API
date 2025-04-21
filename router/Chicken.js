@@ -96,7 +96,7 @@ const sheet_log = async () =>{
         })
 
         const doc = new GoogleSpreadsheet(SHEET_ID, accessSheet)
-
+        
         await doc.loadInfo(); // Load spreadsheet info
     
         const sheet = doc.sheetsByIndex[0];
