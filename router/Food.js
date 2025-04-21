@@ -252,7 +252,7 @@ cron.schedule("0 * * * *", ()=>{
 
 router.post('/food_storage/setup', (req, res)=>{
 
-    console.log("Raw Weight : ", res.body)
+    console.log("Raw Weight : ", res.body.raw_weight)
 
 
     food_store.set({
